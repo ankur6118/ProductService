@@ -6,6 +6,7 @@ import com.scaler.productservicemorningbatch.services.ProductService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/products")
@@ -39,8 +40,8 @@ public class ProductController {
     }
 
     @PatchMapping("/{id}")
-    public Product updateProduct(@PathVariable("id") Long id, @RequestBody Product product){
-        return new Product();
+    public Map<String, Object> updateProduct(@PathVariable("id") Long id, @RequestBody Map<String, Object> fields){
+        return productService.updateProduct(id, fields);
     }
 
     @DeleteMapping("/{id}")
