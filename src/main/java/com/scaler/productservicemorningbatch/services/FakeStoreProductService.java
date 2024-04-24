@@ -3,9 +3,14 @@ package com.scaler.productservicemorningbatch.services;
 import com.scaler.productservicemorningbatch.dtos.FakeStoreProductDto;
 import com.scaler.productservicemorningbatch.models.Category;
 import com.scaler.productservicemorningbatch.models.Product;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpMessageConverterExtractor;
+import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -35,7 +40,7 @@ public class FakeStoreProductService implements ProductService{
 
         FakeStoreProductDto fakeStoreProductDto = restTemplate.getForObject("https://fakestoreapi.com/products/" + id, FakeStoreProductDto.class);
 
-        if(fakeStoreProductDto==null)
+        if(fakeStoreProductDto ==null)
             return null;
 
         return convertFakeStoreProductDtoToProduct(fakeStoreProductDto);
@@ -43,7 +48,19 @@ public class FakeStoreProductService implements ProductService{
 
     @Override
     public List<Product> getAllProduct() {
-        return null;
+        FakeStoreProductDto[] response = restTemplate.getForObject("https://fakestoreapi.com/products/", FakeStoreProductDto[].class);
+
+        if(response == null)
+            return null;
+        /*
+        List<Product> products = new ArrayList<>();
+        for(FakeStoreProductDto fakeStoreProductDto : response)
+            products.add(convertFakeStoreProductDtoToProduct(fakeStoreProductDto));
+
+        return products;
+        */
+        //using Stream
+        return Arrays.stream(response).map(this::convertFakeStoreProductDtoToProduct).toList();
     }
 
     @Override
@@ -53,7 +70,21 @@ public class FakeStoreProductService implements ProductService{
 
     @Override
     public Product replaceProduct(Long id, Product product) {
-        return null;
+        //Converting the incoming Json as per fakeStoreProduct
+        FakeStoreProductDto fakeStoreProductDto = new FakeStoreProductDto();
+        fakeStoreProductDto.setTitle(product.getTitle());
+        fakeStoreProductDto.setDescription(product.getDescription());
+        fakeStoreProductDto.setPrice(product.getPrice());
+        fakeStoreProductDto.setImage(product.getImage());
+
+        RequestCallback requestCallback = restTemplate.httpEntityCallback(fakeStoreProductDto, FakeStoreProductDto.class);
+        HttpMessageConverterExtractor<FakeStoreProductDto> responseExtractor = new HttpMessageConverterExtractor<>(FakeStoreProductDto.class, restTemplate.getMessageConverters());
+        FakeStoreProductDto response = restTemplate.execute("https://fakestoreapi.com/products/" + id, HttpMethod.PUT, requestCallback, responseExtractor);
+
+        if(response ==null)
+            return null;
+
+        return convertFakeStoreProductDtoToProduct(response);
     }
 
     @Override
@@ -66,3 +97,4 @@ public class FakeStoreProductService implements ProductService{
 
     }
 }
+

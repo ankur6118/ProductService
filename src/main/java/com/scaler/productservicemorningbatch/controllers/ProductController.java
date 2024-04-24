@@ -1,10 +1,10 @@
 package com.scaler.productservicemorningbatch.controllers;
 
+import com.scaler.productservicemorningbatch.dtos.FakeStoreProductDto;
 import com.scaler.productservicemorningbatch.models.Product;
 import com.scaler.productservicemorningbatch.services.ProductService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,7 +25,7 @@ public class ProductController {
 
     @GetMapping
     public List<Product> getAllProduct(){
-        return new ArrayList<>();
+        return productService.getAllProduct();
     }
 
     @PostMapping
@@ -35,7 +35,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public Product replaceProduct(@PathVariable("id") Long id, @RequestBody Product product){
-        return new Product();
+        return productService.replaceProduct(id, product);
     }
 
     @PatchMapping("/{id}")
