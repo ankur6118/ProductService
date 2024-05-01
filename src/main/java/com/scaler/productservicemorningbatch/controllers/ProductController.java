@@ -1,12 +1,14 @@
 package com.scaler.productservicemorningbatch.controllers;
 
-import com.scaler.productservicemorningbatch.dtos.FakeStoreProductDto;
+import com.scaler.productservicemorningbatch.exceptions.ProductControllerSpecificException;
 import com.scaler.productservicemorningbatch.models.Product;
 import com.scaler.productservicemorningbatch.services.ProductService;
+import lombok.SneakyThrows;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/products")
@@ -19,9 +21,20 @@ public class ProductController {
     }
 
     //localhost:8080/products/30
+    @SneakyThrows
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable("id") Long id){
-        return productService.getProductById(id);
+    public ResponseEntity<Product> getProductById(@PathVariable("id") Long id){
+        Product product = null;
+
+        //int i = 1/0;
+        //throw new ProductControllerSpecificException();
+//        try {
+            product =  productService.getProductById(id);
+//        }catch(RuntimeException e){
+//            System.out.println("Something went wrong here");
+//            return new ResponseEntity<>(product, HttpStatus.NOT_FOUND);
+//        }
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     @GetMapping
@@ -40,12 +53,22 @@ public class ProductController {
     }
 
     @PatchMapping("/{id}")
-    public Map<String, Object> updateProduct(@PathVariable("id") Long id, @RequestBody Map<String, Object> fields){
-        return productService.updateProduct(id, fields);
+    public Product updateProduct(@PathVariable("id") Long id, @RequestBody Product product){
+        return productService.updateProduct(id, product);
     }
 
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable("id") Long id){
 
+    }
+
+
+    //ProductControllerSpecificException
+    @ExceptionHandler(ProductControllerSpecificException.class)
+    public ResponseEntity<ProductControllerSpecificException> handleProductControllerSpecificException(){
+        ProductControllerSpecificException pcse = new ProductControllerSpecificException();
+        pcse.setMessage("Exception handled by Product Specific Controller");
+        pcse.setDetails("Exception handled by Product Specific Controller Exception Handler");
+        return new ResponseEntity<>(pcse,HttpStatus.BAD_REQUEST);
     }
 }

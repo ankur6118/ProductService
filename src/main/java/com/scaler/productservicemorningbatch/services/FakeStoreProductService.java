@@ -1,6 +1,7 @@
 package com.scaler.productservicemorningbatch.services;
 
 import com.scaler.productservicemorningbatch.dtos.FakeStoreProductDto;
+import com.scaler.productservicemorningbatch.exceptions.InvalidProductIdException;
 import com.scaler.productservicemorningbatch.models.Category;
 import com.scaler.productservicemorningbatch.models.Product;
 import org.springframework.http.HttpEntity;
@@ -38,12 +39,12 @@ public class FakeStoreProductService implements ProductService{
     }
 
     @Override
-    public Product getProductById(Long id) {
+    public Product getProductById(Long id) throws InvalidProductIdException {
 
         FakeStoreProductDto fakeStoreProductDto = restTemplate.getForObject(baseUrl + id, FakeStoreProductDto.class);
 
         if(fakeStoreProductDto ==null)
-            return null;
+            throw new InvalidProductIdException(id,"Invalid Product Id");
 
         return convertFakeStoreProductDtoToProduct(fakeStoreProductDto);
     }
@@ -89,7 +90,8 @@ public class FakeStoreProductService implements ProductService{
         return convertFakeStoreProductDtoToProduct(response);
     }
 
-    /*@Override
+
+    @Override
     public Product updateProduct(Long id, Product product) {
 
         FakeStoreProductDto fakeStoreProductDto = new FakeStoreProductDto();
@@ -97,29 +99,29 @@ public class FakeStoreProductService implements ProductService{
         fakeStoreProductDto.setDescription(product.getDescription());
         fakeStoreProductDto.setPrice(product.getPrice());
 
-        *//*RequestCallback requestCallback = restTemplate.httpEntityCallback(fakeStoreProductDto, FakeStoreProductDto.class);
+        /*RequestCallback requestCallback = restTemplate.httpEntityCallback(fakeStoreProductDto, FakeStoreProductDto.class);
         HttpMessageConverterExtractor<FakeStoreProductDto> responseExtractor = new HttpMessageConverterExtractor<>(FakeStoreProductDto.class, restTemplate.getMessageConverters());
         FakeStoreProductDto response = restTemplate.execute(baseUrl + id, HttpMethod.PATCH, requestCallback, responseExtractor);
 
         if(response ==null)
             return null;
 
-        return convertFakeStoreProductDtoToProduct(response);*//*
+        return convertFakeStoreProductDtoToProduct(response);*/
 
 
         HttpEntity<FakeStoreProductDto> requestEntity = new HttpEntity<>(fakeStoreProductDto);
         ResponseEntity<FakeStoreProductDto> responseEntity = restTemplate.exchange(baseUrl + "/" + id, HttpMethod.PATCH, requestEntity, FakeStoreProductDto.class);
 
         return convertFakeStoreProductDtoToProduct(Objects.requireNonNull(responseEntity.getBody()));
-    }*/
+    }
 
-    @Override
+    /*@Override
     public Map<String, Object> updateProduct(Long id, Map<String, Object> fields) {
 
         Map<String,Object> updateProduct = restTemplate.patchForObject(baseUrl + "/" + id,fields , Map.class);
         System.out.println(updateProduct);
         return updateProduct;
-    }
+    }*/
 
     @Override
     public void deleteProduct(Long id) {
