@@ -1,6 +1,6 @@
 package com.scaler.productservicemorningbatch.models;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
@@ -14,7 +14,7 @@ public class Product extends BaseModel {
     private long id;*/
     private String title;
     private double price;
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL})
     private Category category;
     private String description;
     private String image;
