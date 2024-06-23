@@ -2,10 +2,8 @@ package com.scaler.productservicemorningbatch.advices;
 
 import com.scaler.productservicemorningbatch.dtos.ArithmeticExceptionDto;
 import com.scaler.productservicemorningbatch.dtos.ArrayIndexOutOfBoundExceptionDto;
-import com.scaler.productservicemorningbatch.dtos.ExceptionDto;
 import com.scaler.productservicemorningbatch.dtos.InvalidProductIdExceptionDto;
 import com.scaler.productservicemorningbatch.exceptions.InvalidProductIdException;
-import org.springframework.cglib.transform.impl.InterceptFieldCallback;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -31,7 +29,8 @@ public class ExceptionHandlerAdvice {
     public ResponseEntity<InvalidProductIdExceptionDto> handleInvalidProductIdException(InvalidProductIdException e){
         InvalidProductIdExceptionDto dto = new InvalidProductIdExceptionDto();
         dto.setId(e.getProductId());
-        dto.setMessage("Invalid Product Id is passed");
+        dto.setMessage("Invalid Product Id is passed - Message from Controller Advices");
+        dto.setDetails(e.getMessage());
         return new ResponseEntity<>(dto,HttpStatus.BAD_REQUEST);
     }
 }

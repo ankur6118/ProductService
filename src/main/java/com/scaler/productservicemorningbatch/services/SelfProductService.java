@@ -5,12 +5,14 @@ import com.scaler.productservicemorningbatch.models.Category;
 import com.scaler.productservicemorningbatch.models.Product;
 import com.scaler.productservicemorningbatch.repositories.CategoryRepository;
 import com.scaler.productservicemorningbatch.repositories.ProductRepository;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service("selfProductService")
+@Primary
 public class SelfProductService implements ProductService{
 
     ProductRepository productRepository;
@@ -22,14 +24,14 @@ public class SelfProductService implements ProductService{
     }
     @Override
     public Product getProductById(Long id) throws InvalidProductIdException {
-        Optional<Product> optionalProduct= productRepository.findById(id);
+        Optional<Product> optionalProduct = productRepository.findById(id);
         //throw  new InvalidProductIdException(id, "Invalid Id");
-        return optionalProduct.orElse(null);
+        return optionalProduct.orElseThrow(() -> new InvalidProductIdException(id, "Invalid Id"));
     }
 
     @Override
     public List<Product> getAllProduct() {
-        return null;
+        return productRepository.getAllProducts();
     }
 
     @Override

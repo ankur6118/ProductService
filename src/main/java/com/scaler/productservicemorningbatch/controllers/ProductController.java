@@ -1,5 +1,6 @@
 package com.scaler.productservicemorningbatch.controllers;
 
+import com.scaler.productservicemorningbatch.exceptions.InvalidProductIdException;
 import com.scaler.productservicemorningbatch.exceptions.ProductControllerSpecificException;
 import com.scaler.productservicemorningbatch.models.Product;
 import com.scaler.productservicemorningbatch.services.ProductService;
@@ -24,7 +25,7 @@ public class ProductController {
     //localhost:8080/products/30
     @SneakyThrows
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable("id") Long id){
+    public ResponseEntity<Product> getProductById(@PathVariable("id") Long id) throws InvalidProductIdException {
         Product product;
 
         //int i = 1/0;

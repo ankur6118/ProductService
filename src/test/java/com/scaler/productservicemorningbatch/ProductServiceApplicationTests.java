@@ -1,21 +1,24 @@
 package com.scaler.productservicemorningbatch;
 
-import com.scaler.productservicemorningbatch.models.Category;
-import com.scaler.productservicemorningbatch.models.Product;
+import com.scaler.productservicemorningbatch.controllers.ProductController;
+import com.scaler.productservicemorningbatch.exceptions.InvalidProductIdException;
 import com.scaler.productservicemorningbatch.repositories.CategoryRepository;
 import com.scaler.productservicemorningbatch.repositories.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class ProductServiceApplicationTests {
 
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    ProductController productController;
 
     @Autowired
     CategoryRepository categoryRepository;
@@ -25,6 +28,20 @@ class ProductServiceApplicationTests {
     }
 
     @Test
+    void multiplyBy2(){
+        int i=1;
+        //arrange, assert and act - 3A's of Unit Testing
+        i = i+1;
+        assertEquals(2,i);
+    }
+
+    @Test
+    void invalidProductIdExceptionTest(){
+        assertThrows(InvalidProductIdException.class,
+        () -> productController.getProductById(10000L));
+        }
+
+    /*@Test
     public void testQueries(){
 
         List<Product> products = productRepository.someRandomQuery(102L);
@@ -55,7 +72,7 @@ class ProductServiceApplicationTests {
         }
 
 
-    }
+    }*/
 
 
 }

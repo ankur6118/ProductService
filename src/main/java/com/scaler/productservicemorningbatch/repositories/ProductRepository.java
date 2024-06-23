@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-
+    
     Optional<Product> findById(Long id);
 
     Optional<Product> findByTitleAndDescription(String title, String description); //And Operator
@@ -21,6 +21,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findTopThreeByTitle(String title); //limit the result upto 3
 
     Optional<Product> findByCategory(Category category);
+
+    @Query(value = "Select * from product", nativeQuery = true)
+    List<Product> getAllProducts();
 
     void deleteById(Long id);
 
