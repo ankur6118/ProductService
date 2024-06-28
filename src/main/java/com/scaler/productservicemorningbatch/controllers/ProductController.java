@@ -1,5 +1,7 @@
 package com.scaler.productservicemorningbatch.controllers;
 
+import com.scaler.productservicemorningbatch.commons.AuthenticationCommons;
+import com.scaler.productservicemorningbatch.dtos.UserDto;
 import com.scaler.productservicemorningbatch.exceptions.InvalidProductIdException;
 import com.scaler.productservicemorningbatch.exceptions.ProductControllerSpecificException;
 import com.scaler.productservicemorningbatch.models.Product;
@@ -18,8 +20,11 @@ public class ProductController {
 
     ProductService productService;
 
-    ProductController(@Qualifier("selfProductService") ProductService productService){
+    AuthenticationCommons authenticationCommons;
+
+    ProductController(@Qualifier("selfProductService") ProductService productService, AuthenticationCommons authenticationCommons){
         this.productService = productService;
+        this.authenticationCommons = authenticationCommons;
     }
 
     //localhost:8080/products/30
@@ -39,9 +44,30 @@ public class ProductController {
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
-    @GetMapping
-    public List<Product> getAllProduct(){
-        return productService.getAllProduct();
+    @GetMapping("/users/{token}")
+    public ResponseEntity<List<Product>> getAllProduct(@PathVariable String token){
+        UserDto userDto = authenticationCommons.validateToken(token);
+
+
+        if(userDto == null)
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        /*boolean isAdmin = false;
+        for(Role role : userDto.getRoles()){
+            if(role.equals("ADMIN")){
+                isAdmin = true;
+                break;
+            }
+        }
+
+        if(!isAdmin){
+            //throw some exception
+            return null;
+        }*/
+
+        List<Product> products =  productService.getAllProduct();
+
+        return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
     @PostMapping

@@ -1,7 +1,7 @@
 package com.scaler.productservicemorningbatch.services;
 
+import com.scaler.productservicemorningbatch.commons.AuthenticationCommons;
 import com.scaler.productservicemorningbatch.exceptions.InvalidProductIdException;
-import com.scaler.productservicemorningbatch.models.Category;
 import com.scaler.productservicemorningbatch.models.Product;
 import com.scaler.productservicemorningbatch.repositories.CategoryRepository;
 import com.scaler.productservicemorningbatch.repositories.ProductRepository;
@@ -17,10 +17,13 @@ public class SelfProductService implements ProductService{
 
     ProductRepository productRepository;
     CategoryRepository categoryRepository;
+    AuthenticationCommons authenticationCommons;
 
-    SelfProductService(ProductRepository productRepository, CategoryRepository categoryRepository){
+    SelfProductService(ProductRepository productRepository, CategoryRepository categoryRepository,
+                        AuthenticationCommons authenticateCommons){
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.authenticationCommons = authenticationCommons;
     }
     @Override
     public Product getProductById(Long id) throws InvalidProductIdException {
