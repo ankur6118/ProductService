@@ -2,6 +2,8 @@ package com.scaler.productservicemorningbatch.repositories;
 
 import com.scaler.productservicemorningbatch.models.Category;
 import com.scaler.productservicemorningbatch.models.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -24,6 +26,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(value = "Select * from product", nativeQuery = true)
     List<Product> getAllProducts();
+
+    Page<Product> findAll(Pageable pageable);
 
     void deleteById(Long id);
 

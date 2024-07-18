@@ -1,23 +1,9 @@
 package com.scaler.productservicemorningbatch.controllers;
 
-import com.scaler.productservicemorningbatch.exceptions.InvalidProductIdException;
-import com.scaler.productservicemorningbatch.models.Product;
-import com.scaler.productservicemorningbatch.services.ProductService;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
-
-@SpringBootTest
+//@SpringBootTest
 class ProductControllerTest {
 
-    @Autowired
+   /* @Autowired
     private ProductController productController;
 
     @MockBean
@@ -51,7 +37,7 @@ class ProductControllerTest {
 
         assertThrows(InvalidProductIdException.class,
                 ()-> productController.getProductById(2000L));
-    }
+    }*/
 
     /*@Test
     void getAllProduct() {

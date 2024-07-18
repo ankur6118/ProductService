@@ -4,6 +4,8 @@ import com.scaler.productservicemorningbatch.dtos.FakeStoreProductDto;
 import com.scaler.productservicemorningbatch.exceptions.InvalidProductIdException;
 import com.scaler.productservicemorningbatch.models.Category;
 import com.scaler.productservicemorningbatch.models.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +15,6 @@ import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 @Service("fakeStoreProductService")
@@ -21,10 +22,13 @@ public class FakeStoreProductService implements ProductService{
 
     RestTemplate restTemplate;
 
+    RedisTemplate redisTemplate;
+
     private String baseUrl = "https://fakestoreapi.com/products/";
 
-    FakeStoreProductService(RestTemplate restTemplate){
+    FakeStoreProductService(RestTemplate restTemplate, RedisTemplate redisTemplate){
         this.restTemplate = restTemplate;
+        this.redisTemplate = redisTemplate;
     }
 
     private Product convertFakeStoreProductDtoToProduct(FakeStoreProductDto fakeStoreProductDto){
@@ -43,16 +47,26 @@ public class FakeStoreProductService implements ProductService{
     @Override
     public Product getProductById(Long id) throws InvalidProductIdException {
 
+        Product product = (Product) redisTemplate.opsForHash().get("PRODUCTS","PRODUCT_"+id);
+
+        if(product != null)
+            return product;
+
+
         FakeStoreProductDto fakeStoreProductDto = restTemplate.getForObject(baseUrl + id, FakeStoreProductDto.class);
 
         if(fakeStoreProductDto ==null)
             throw new InvalidProductIdException(id,"Invalid Product Id");
 
-        return convertFakeStoreProductDtoToProduct(fakeStoreProductDto);
+        product = convertFakeStoreProductDtoToProduct(fakeStoreProductDto);
+        redisTemplate.opsForHash().put("PRODUCTS","PRODUCT_"+id, product);
+
+        return product;
     }
 
     @Override
-    public List<Product> getAllProduct() {
+    public Page<Product> getAllProduct(int pageNumber, int pageSize,
+                                       String sortDir) {
         FakeStoreProductDto[] response = restTemplate.getForObject(baseUrl, FakeStoreProductDto[].class);
 
         if(response == null)
@@ -65,7 +79,7 @@ public class FakeStoreProductService implements ProductService{
         return products;
         */
         //using Stream
-        return Arrays.stream(response).map(this::convertFakeStoreProductDtoToProduct).toList();
+        return (Page<Product>) Arrays.stream(response).map(this::convertFakeStoreProductDtoToProduct).toList();
     }
 
     @Override

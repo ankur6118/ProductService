@@ -6,6 +6,9 @@ import com.scaler.productservicemorningbatch.models.Product;
 import com.scaler.productservicemorningbatch.repositories.CategoryRepository;
 import com.scaler.productservicemorningbatch.repositories.ProductRepository;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,8 +36,12 @@ public class SelfProductService implements ProductService{
     }
 
     @Override
-    public List<Product> getAllProduct() {
-        return productRepository.getAllProducts();
+    public Page<Product> getAllProduct(int pageNumber, int pageSize,
+                                       String sortDir) {
+        return productRepository.findAll(PageRequest.of(pageNumber,
+                pageSize,
+                sortDir.equals("asc")? Sort.by("price").ascending():
+                Sort.by("price").descending()));
     }
 
     @Override

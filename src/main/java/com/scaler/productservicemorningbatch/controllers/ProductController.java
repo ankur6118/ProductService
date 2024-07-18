@@ -1,18 +1,16 @@
 package com.scaler.productservicemorningbatch.controllers;
 
 import com.scaler.productservicemorningbatch.commons.AuthenticationCommons;
-import com.scaler.productservicemorningbatch.dtos.UserDto;
 import com.scaler.productservicemorningbatch.exceptions.InvalidProductIdException;
 import com.scaler.productservicemorningbatch.exceptions.ProductControllerSpecificException;
 import com.scaler.productservicemorningbatch.models.Product;
 import com.scaler.productservicemorningbatch.services.ProductService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/products")
@@ -22,7 +20,9 @@ public class ProductController {
 
     AuthenticationCommons authenticationCommons;
 
-    ProductController(@Qualifier("selfProductService") ProductService productService, AuthenticationCommons authenticationCommons){
+    //If multiple implementations are present for a interface and spring boot is
+    //which one to choose then we cna resolve this ambiguity in 2 ways either by using the @Qualifier or make one of the implementation as @Primary
+    ProductController(@Qualifier("fakeStoreProductService") ProductService productService, AuthenticationCommons authenticationCommons){
         this.productService = productService;
         this.authenticationCommons = authenticationCommons;
     }
@@ -44,13 +44,17 @@ public class ProductController {
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
-    @GetMapping("/users/{token}")
-    public ResponseEntity<List<Product>> getAllProduct(@PathVariable String token){
-        UserDto userDto = authenticationCommons.validateToken(token);
+    //@GetMapping("/users/{token}")
+    @GetMapping("/")
+    public ResponseEntity<Page<Product>> getAllProduct(@RequestParam("pageNumber") int pageNumber,
+                                                       @RequestParam("pageSize") int pageSize,
+                                                       @RequestParam("sortDir") String sortDir){
+    //public ResponseEntity<List<Product>> getAllProduct(@PathVariable String token){
+        //UserDto userDto = authenticationCommons.validateToken(token);
 
 
-        if(userDto == null)
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+       /* if(userDto == null)
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);*/
 
         /*boolean isAdmin = false;
         for(Role role : userDto.getRoles()){
@@ -65,7 +69,7 @@ public class ProductController {
             return null;
         }*/
 
-        List<Product> products =  productService.getAllProduct();
+        Page<Product> products =  productService.getAllProduct(pageNumber,pageSize,sortDir);
 
         return new ResponseEntity<>(products, HttpStatus.OK);
     }

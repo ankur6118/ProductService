@@ -2,12 +2,11 @@ package com.scaler.productservicemorningbatch.services;
 
 import com.scaler.productservicemorningbatch.exceptions.InvalidProductIdException;
 import com.scaler.productservicemorningbatch.models.Product;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface ProductService {
     public Product getProductById(Long Id) throws InvalidProductIdException;
-    public List<Product> getAllProduct();
+    public Page<Product> getAllProduct(int pageNumber, int pageSize, String sortDir);
     public Product createProduct(Product product);
     public Product replaceProduct(Long id, Product product);
     public Product updateProduct(Long id, Product product);
