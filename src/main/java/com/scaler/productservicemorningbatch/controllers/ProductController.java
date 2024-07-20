@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("/products")
@@ -20,11 +21,15 @@ public class ProductController {
 
     AuthenticationCommons authenticationCommons;
 
+    RestTemplate restTemplate;
+
     //If multiple implementations are present for a interface and spring boot is
     //which one to choose then we cna resolve this ambiguity in 2 ways either by using the @Qualifier or make one of the implementation as @Primary
-    ProductController(@Qualifier("fakeStoreProductService") ProductService productService, AuthenticationCommons authenticationCommons){
+    ProductController(@Qualifier("fakeStoreProductService") ProductService productService,
+                      AuthenticationCommons authenticationCommons, RestTemplate restTemplate){
         this.productService = productService;
         this.authenticationCommons = authenticationCommons;
+        this.restTemplate = restTemplate;
     }
 
     //localhost:8080/products/30
@@ -36,6 +41,7 @@ public class ProductController {
         //int i = 1/0;
         //throw new ProductControllerSpecificException();
 //        try {
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://UserService/users/10", String.class);
             product =  productService.getProductById(id);
 //        }catch(RuntimeException e){
 //            System.out.println("Something went wrong here");
